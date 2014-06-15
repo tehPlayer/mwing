@@ -38,9 +38,9 @@ class MwingReader
 
   def parse_row row, time
     [
-      create_timestamp(time),
       time.day,
-      (row[5].to_i * @time_multiplier).to_f.round(2)
+      create_timestamp(time).to_s.gsub('.', ','),
+      (row[5].to_i * @time_multiplier).to_f.round(2).to_s.gsub('.', ',')
     ] 
   end
 
@@ -49,15 +49,12 @@ class MwingReader
   end
 
   def create_timestamp time
-    case time.minute
-    when 59
+    if time.minute >= 50
       (time.hour + 1) * 2 
-    when 30, 29
+    elsif time.minute < 50 and time.minute > 5
       (time.hour * 2) + 1
-    when 0
-      time.hour * 2
     else
-      binding.pry
+      time.hour * 2
     end / 2.0
   end
 end
